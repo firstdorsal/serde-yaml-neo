@@ -1,14 +1,14 @@
 [package]
-name = "serde_yaml_ng"
+name = "serde_yaml_neo"
 version = "0.10.0"
-authors = ["Antoine Catton <devel@antoine.catton.fr>"]
+authors = ["Paul Colin Hennig <8d_fvfmaa-o2wf_79aqig6g2ki6-09ffkeqmyo3d@vindelicum.eu>"]
 categories = ["encoding", "parser-implementations"]
 description = "YAML data format for Serde"
-documentation = "https://docs.rs/serde_yaml_ng/"
+documentation = "https://docs.rs/serde_yaml_neo/"
 edition = "2021"
 keywords = ["yaml", "serde", "serialization"]
 license = "MIT"
-repository = "https://github.com/acatton/serde-yaml-ng"
+repository = "https://github.com/firstdorsal/serde-yaml-neo"
 rust-version = "1.64"
 
 [dependencies]

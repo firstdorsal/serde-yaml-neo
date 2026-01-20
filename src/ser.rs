@@ -24,7 +24,7 @@ type Result<T, E = Error> = std::result::Result<T, E>;
 /// ```
 /// use serde::Serialize;
 /// use std::collections::BTreeMap;
-/// use serde_yaml_ng::{Result, Serializer};
+/// use serde_yaml_neo::{Result, Serializer};
 ///
 /// fn main() -> Result<()> {
 ///     let mut buffer = Vec::new();
@@ -60,12 +60,41 @@ impl<W> Serializer<W>
 where
     W: io::Write,
 {
-    /// Creates a new YAML serializer.
+    /// Creates a new YAML serializer with the default indentation of 2 spaces.
     pub fn new(writer: W) -> Self {
-        let mut emitter = Emitter::new({
-            let writer = Box::new(writer);
-            unsafe { mem::transmute::<Box<dyn io::Write>, Box<dyn io::Write>>(writer) }
-        });
+        Self::with_indent(writer, 2)
+    }
+
+    /// Creates a new YAML serializer with the specified indentation.
+    ///
+    /// The indentation must be between 2 and 9 spaces (inclusive).
+    /// Values outside this range will be clamped to 2.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use serde::Serialize;
+    /// use std::collections::BTreeMap;
+    /// use serde_yaml_neo::Serializer;
+    ///
+    /// let mut buffer = Vec::new();
+    /// let mut ser = Serializer::with_indent(&mut buffer, 4);
+    ///
+    /// let mut object = BTreeMap::new();
+    /// object.insert("outer", BTreeMap::from([("inner", 1)]));
+    /// object.serialize(&mut ser).unwrap();
+    ///
+    /// let output = String::from_utf8(buffer).unwrap();
+    /// assert!(output.contains("    inner")); // 4-space indent
+    /// ```
+    pub fn with_indent(writer: W, indent: usize) -> Self {
+        let mut emitter = Emitter::new_with_indent(
+            {
+                let writer = Box::new(writer);
+                unsafe { mem::transmute::<Box<dyn io::Write>, Box<dyn io::Write>>(writer) }
+            },
+            indent,
+        );
         emitter.emit(Event::StreamStart).unwrap();
         Serializer {
             depth: 0,
@@ -710,5 +739,58 @@ where
 {
     let mut vec = Vec::with_capacity(128);
     to_writer(&mut vec, value)?;
+    String::from_utf8(vec).map_err(|error| error::new(ErrorImpl::FromUtf8(error)))
+}
+
+/// Serialize the given data structure as YAML into the IO stream with custom indentation.
+///
+/// The indentation must be between 2 and 9 spaces (inclusive).
+/// Values outside this range will be clamped to 2.
+///
+/// # Example
+///
+/// ```
+/// use std::collections::BTreeMap;
+///
+/// let mut data = BTreeMap::new();
+/// data.insert("outer", BTreeMap::from([("inner", 1)]));
+///
+/// let mut buffer = Vec::new();
+/// serde_yaml_neo::to_writer_with_indent(&mut buffer, &data, 4).unwrap();
+///
+/// let output = String::from_utf8(buffer).unwrap();
+/// assert!(output.contains("    inner")); // 4-space indent
+/// ```
+pub fn to_writer_with_indent<W, T>(writer: W, value: &T, indent: usize) -> Result<()>
+where
+    W: io::Write,
+    T: ?Sized + ser::Serialize,
+{
+    let mut serializer = Serializer::with_indent(writer, indent);
+    value.serialize(&mut serializer)
+}
+
+/// Serialize the given data structure as a String of YAML with custom indentation.
+///
+/// The indentation must be between 2 and 9 spaces (inclusive).
+/// Values outside this range will be clamped to 2.
+///
+/// # Example
+///
+/// ```
+/// use std::collections::BTreeMap;
+///
+/// let mut data = BTreeMap::new();
+/// data.insert("outer", BTreeMap::from([("inner", 1)]));
+///
+/// let yaml = serde_yaml_neo::to_string_with_indent(&data, 4).unwrap();
+/// assert!(yaml.contains("    inner")); // 4-space indent
+/// ```
+pub fn to_string_with_indent<T>(value: &T, indent: usize) -> Result<String>
+where
+    T: ?Sized + ser::Serialize,
+{
+    let mut vec = Vec::with_capacity(128);
+    to_writer_with_indent(&mut vec, value, indent)?;
     String::from_utf8(vec).map_err(|error| error::new(ErrorImpl::FromUtf8(error)))
 }

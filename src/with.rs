@@ -19,13 +19,13 @@
 ///
 /// #[derive(Serialize, Deserialize, PartialEq, Debug)]
 /// struct Struct {
-///     #[serde(with = "serde_yaml_ng::with::singleton_map")]
+///     #[serde(with = "serde_yaml_neo::with::singleton_map")]
 ///     w: Enum,
-///     #[serde(with = "serde_yaml_ng::with::singleton_map")]
+///     #[serde(with = "serde_yaml_neo::with::singleton_map")]
 ///     x: Enum,
-///     #[serde(with = "serde_yaml_ng::with::singleton_map")]
+///     #[serde(with = "serde_yaml_neo::with::singleton_map")]
 ///     y: Enum,
-///     #[serde(with = "serde_yaml_ng::with::singleton_map")]
+///     #[serde(with = "serde_yaml_neo::with::singleton_map")]
 ///     z: Enum,
 /// }
 ///
@@ -37,10 +37,10 @@
 ///         z: Enum::Struct { value: 1 },
 ///     };
 ///
-///     let yaml = serde_yaml_ng::to_string(&object).unwrap();
+///     let yaml = serde_yaml_neo::to_string(&object).unwrap();
 ///     print!("{}", yaml);
 ///
-///     let deserialized: Struct = serde_yaml_ng::from_str(&yaml).unwrap();
+///     let deserialized: Struct = serde_yaml_neo::from_str(&yaml).unwrap();
 ///     assert_eq!(object, deserialized);
 /// }
 /// ```
@@ -103,7 +103,7 @@ pub mod singleton_map {
 
     /// <div class="warning">This is an new API which is not present in the original <a
     /// href="https://github.com/dtolnay/serde-yaml"><code>serde-yaml</code></a>. <strong>This API
-    /// is not garanteed to be present in <code>serde-yaml-ng</code> version 1.0.</strong> However,
+    /// is not garanteed to be present in <code>serde-yaml-neo</code> version 1.0.</strong> However,
     /// this API won't be removed without an acceptable alternative solution for the problem it is
     /// trying to solve.</div>
     ///
@@ -118,7 +118,7 @@ pub mod singleton_map {
     /// use std::sync::Mutex;
     /// use serde_derive::{Deserialize, Serialize};
     /// use serde::{Deserialize, Serialize};
-    /// use serde_yaml_ng::with::singleton_map::SingletonMap;
+    /// use serde_yaml_neo::with::singleton_map::SingletonMap;
     ///
     /// #[derive(Serialize, Deserialize)]
     /// pub enum Bar {
@@ -129,7 +129,7 @@ pub mod singleton_map {
     /// pub struct Foo {
     ///     #[serde(with = "bar_serializer")]
     ///     // Because it has a Mutex, we can't simply derive Serialize/Deserialize here, nor can
-    ///     // we use `#[serde(with = "serde_yaml_ng::with::singleton_map")]`.  We need a custom
+    ///     // we use `#[serde(with = "serde_yaml_neo::with::singleton_map")]`.  We need a custom
     ///     // `with` module to deal with the Mutex.
     ///     bar: Mutex<Bar>
     /// }
@@ -910,7 +910,7 @@ pub mod singleton_map {
 /// struct Outer {
 ///     tagged_style: Inner,
 ///
-///     #[serde(with = "serde_yaml_ng::with::singleton_map_recursive")]
+///     #[serde(with = "serde_yaml_neo::with::singleton_map_recursive")]
 ///     singleton_map_style: Inner,
 /// }
 ///
@@ -926,10 +926,10 @@ pub mod singleton_map {
 ///         },
 ///     };
 ///
-///     let yaml = serde_yaml_ng::to_string(&object).unwrap();
+///     let yaml = serde_yaml_neo::to_string(&object).unwrap();
 ///     print!("{}", yaml);
 ///
-///     let deserialized: Outer = serde_yaml_ng::from_str(&yaml).unwrap();
+///     let deserialized: Outer = serde_yaml_neo::from_str(&yaml).unwrap();
 ///     assert_eq!(object, deserialized);
 /// }
 /// ```
@@ -975,12 +975,12 @@ pub mod singleton_map {
 ///     };
 ///
 ///     let mut buf = Vec::new();
-///     let mut serializer = serde_yaml_ng::Serializer::new(&mut buf);
-///     serde_yaml_ng::with::singleton_map_recursive::serialize(&object, &mut serializer).unwrap();
+///     let mut serializer = serde_yaml_neo::Serializer::new(&mut buf);
+///     serde_yaml_neo::with::singleton_map_recursive::serialize(&object, &mut serializer).unwrap();
 ///     io::stdout().write_all(&buf).unwrap();
 ///
-///     let deserializer = serde_yaml_ng::Deserializer::from_slice(&buf);
-///     let deserialized: Inner = serde_yaml_ng::with::singleton_map_recursive::deserialize(deserializer).unwrap();
+///     let deserializer = serde_yaml_neo::Deserializer::from_slice(&buf);
+///     let deserialized: Inner = serde_yaml_neo::with::singleton_map_recursive::deserialize(deserializer).unwrap();
 ///     assert_eq!(object, deserialized);
 /// }
 /// ```

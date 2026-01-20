@@ -1,5 +1,5 @@
 [package]
-name = "serde_yaml_ng-fuzz"
+name = "serde_yaml_neo-fuzz"
 version = "0.0.0"
 authors = ["Antoine Catton <devel@antoine.catton.fr>"]
 edition = "2021"
@@ -10,7 +10,7 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-serde_yaml_ng = { path = ".." }
+serde_yaml_neo = { path = ".." }
 
 [[bin]]
 name = "fuzz_from_slice"

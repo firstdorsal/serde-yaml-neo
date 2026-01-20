@@ -8,7 +8,7 @@
 use indoc::indoc;
 use serde::ser::SerializeMap;
 use serde_derive::{Deserialize, Serialize};
-use serde_yaml_ng::{Mapping, Number, Value};
+use serde_yaml_neo::{Mapping, Number, Value};
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 use std::iter;
@@ -17,24 +17,24 @@ fn test_serde<T>(thing: &T, yaml: &str)
 where
     T: serde::Serialize + serde::de::DeserializeOwned + PartialEq + Debug,
 {
-    let serialized = serde_yaml_ng::to_string(&thing).unwrap();
+    let serialized = serde_yaml_neo::to_string(&thing).unwrap();
     assert_eq!(yaml, serialized);
 
-    let value = serde_yaml_ng::to_value(thing).unwrap();
-    let serialized = serde_yaml_ng::to_string(&value).unwrap();
+    let value = serde_yaml_neo::to_value(thing).unwrap();
+    let serialized = serde_yaml_neo::to_string(&value).unwrap();
     assert_eq!(yaml, serialized);
 
-    let deserialized: T = serde_yaml_ng::from_str(yaml).unwrap();
+    let deserialized: T = serde_yaml_neo::from_str(yaml).unwrap();
     assert_eq!(*thing, deserialized);
 
-    let value: Value = serde_yaml_ng::from_str(yaml).unwrap();
+    let value: Value = serde_yaml_neo::from_str(yaml).unwrap();
     let deserialized = T::deserialize(&value).unwrap();
     assert_eq!(*thing, deserialized);
 
-    let deserialized: T = serde_yaml_ng::from_value(value).unwrap();
+    let deserialized: T = serde_yaml_neo::from_value(value).unwrap();
     assert_eq!(*thing, deserialized);
 
-    serde_yaml_ng::from_str::<serde::de::IgnoredAny>(yaml).unwrap();
+    serde_yaml_neo::from_str::<serde::de::IgnoredAny>(yaml).unwrap();
 }
 
 #[test]
@@ -122,7 +122,7 @@ fn test_float() {
     "};
     test_serde(&thing, yaml);
 
-    let float: f64 = serde_yaml_ng::from_str(indoc! {"
+    let float: f64 = serde_yaml_neo::from_str(indoc! {"
         .nan
     "})
     .unwrap();
@@ -149,7 +149,7 @@ fn test_float32() {
     "};
     test_serde(&thing, yaml);
 
-    let single_float: f32 = serde_yaml_ng::from_str(indoc! {"
+    let single_float: f32 = serde_yaml_neo::from_str(indoc! {"
         .nan
     "})
     .unwrap();
@@ -162,19 +162,19 @@ fn test_char() {
     let yaml = indoc! {"
         '.'
     "};
-    assert_eq!(yaml, serde_yaml_ng::to_string(&ch).unwrap());
+    assert_eq!(yaml, serde_yaml_neo::to_string(&ch).unwrap());
 
     let ch = '#';
     let yaml = indoc! {"
         '#'
     "};
-    assert_eq!(yaml, serde_yaml_ng::to_string(&ch).unwrap());
+    assert_eq!(yaml, serde_yaml_neo::to_string(&ch).unwrap());
 
     let ch = '-';
     let yaml = indoc! {"
         '-'
     "};
-    assert_eq!(yaml, serde_yaml_ng::to_string(&ch).unwrap());
+    assert_eq!(yaml, serde_yaml_neo::to_string(&ch).unwrap());
 }
 
 #[test]
@@ -220,7 +220,7 @@ fn test_map_key_value() {
     let yaml = indoc! {"
         k: v
     "};
-    assert_eq!(yaml, serde_yaml_ng::to_string(&Map).unwrap());
+    assert_eq!(yaml, serde_yaml_neo::to_string(&Map).unwrap());
 }
 
 #[test]
@@ -575,4 +575,163 @@ fn test_long_string() {
     "};
 
     test_serde(&thing, yaml);
+}
+
+#[test]
+fn test_indent_default() {
+    #[derive(Serialize)]
+    struct Outer {
+        inner: Inner,
+    }
+    #[derive(Serialize)]
+    struct Inner {
+        value: i32,
+    }
+    let thing = Outer {
+        inner: Inner { value: 42 },
+    };
+
+    // Default is 2 spaces
+    let yaml = serde_yaml_neo::to_string(&thing).unwrap();
+    assert!(yaml.contains("  value: 42"), "Expected 2-space indent");
+}
+
+#[test]
+fn test_indent_4_spaces() {
+    #[derive(Serialize)]
+    struct Outer {
+        inner: Inner,
+    }
+    #[derive(Serialize)]
+    struct Inner {
+        value: i32,
+    }
+    let thing = Outer {
+        inner: Inner { value: 42 },
+    };
+
+    let yaml = serde_yaml_neo::to_string_with_indent(&thing, 4).unwrap();
+    assert!(
+        yaml.contains("    value: 42"),
+        "Expected 4-space indent, got: {}",
+        yaml
+    );
+}
+
+#[test]
+fn test_indent_8_spaces() {
+    #[derive(Serialize)]
+    struct Outer {
+        inner: Inner,
+    }
+    #[derive(Serialize)]
+    struct Inner {
+        value: i32,
+    }
+    let thing = Outer {
+        inner: Inner { value: 42 },
+    };
+
+    let yaml = serde_yaml_neo::to_string_with_indent(&thing, 8).unwrap();
+    assert!(
+        yaml.contains("        value: 42"),
+        "Expected 8-space indent, got: {}",
+        yaml
+    );
+}
+
+#[test]
+fn test_indent_to_writer() {
+    #[derive(Serialize)]
+    struct Outer {
+        inner: Inner,
+    }
+    #[derive(Serialize)]
+    struct Inner {
+        value: i32,
+    }
+    let thing = Outer {
+        inner: Inner { value: 42 },
+    };
+
+    let mut buffer = Vec::new();
+    serde_yaml_neo::to_writer_with_indent(&mut buffer, &thing, 4).unwrap();
+    let yaml = String::from_utf8(buffer).unwrap();
+    assert!(
+        yaml.contains("    value: 42"),
+        "Expected 4-space indent, got: {}",
+        yaml
+    );
+}
+
+#[test]
+fn test_indent_serializer_with_indent() {
+    use serde::Serialize;
+
+    #[derive(Serialize)]
+    struct Outer {
+        inner: Inner,
+    }
+    #[derive(Serialize)]
+    struct Inner {
+        value: i32,
+    }
+    let thing = Outer {
+        inner: Inner { value: 42 },
+    };
+
+    let mut buffer = Vec::new();
+    let mut ser = serde_yaml_neo::Serializer::with_indent(&mut buffer, 6);
+    thing.serialize(&mut ser).unwrap();
+
+    let yaml = String::from_utf8(buffer).unwrap();
+    assert!(
+        yaml.contains("      value: 42"),
+        "Expected 6-space indent, got: {}",
+        yaml
+    );
+}
+
+#[test]
+fn test_indent_nested_sequences() {
+    let thing = vec![vec![1, 2], vec![3, 4]];
+
+    // With 4-space indent
+    let yaml = serde_yaml_neo::to_string_with_indent(&thing, 4).unwrap();
+    // Nested sequences: continuation items use the full indent
+    // Format: "-   - 1\n    - 2\n" (dash + 3 spaces for first, 4 spaces for rest)
+    assert!(
+        yaml.contains("    - 2"),
+        "Expected 4-space indent for nested sequence continuation, got: {}",
+        yaml
+    );
+}
+
+#[test]
+fn test_indent_deep_nesting() {
+    #[derive(Serialize)]
+    struct Level1 {
+        level2: Level2,
+    }
+    #[derive(Serialize)]
+    struct Level2 {
+        level3: Level3,
+    }
+    #[derive(Serialize)]
+    struct Level3 {
+        value: i32,
+    }
+    let thing = Level1 {
+        level2: Level2 {
+            level3: Level3 { value: 42 },
+        },
+    };
+
+    let yaml = serde_yaml_neo::to_string_with_indent(&thing, 4).unwrap();
+    // Level 3 should have 8 spaces (4 * 2 levels deep)
+    assert!(
+        yaml.contains("        value: 42"),
+        "Expected 8-space indent at level 3, got: {}",
+        yaml
+    );
 }

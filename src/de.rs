@@ -25,7 +25,7 @@ type Result<T, E = Error> = std::result::Result<T, E>;
 ///
 /// ```
 /// use serde::Deserialize;
-/// use serde_yaml_ng::{Deserializer, Result, Value};
+/// use serde_yaml_neo::{Deserializer, Result, Value};
 ///
 /// fn main() -> Result<()> {
 ///     let input = "k: 107\n";
@@ -40,7 +40,7 @@ type Result<T, E = Error> = std::result::Result<T, E>;
 ///
 /// ```
 /// use serde::Deserialize;
-/// use serde_yaml_ng::{Deserializer, Result, Value};
+/// use serde_yaml_neo::{Deserializer, Result, Value};
 ///
 /// fn main() -> Result<()> {
 ///     let input = "---\nk: 107\n...\n---\nj: 106\n";
