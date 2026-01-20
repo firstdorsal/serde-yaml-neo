@@ -1,18 +1,12 @@
-# Serde YAML
+# Serde YAML Neo
 
-[<img alt="github" src="https://img.shields.io/badge/github-acatton/serde--yaml--ng-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/acatton/serde-yaml-neo)
+[<img alt="github" src="https://img.shields.io/badge/github-firstdorsal/serde--yaml--neo-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/firstdorsal/serde-yaml-neo)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/serde_yaml_neo.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/serde_yaml_neo)
-[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-serde__yaml__ng-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/serde_yaml_neo)
-[<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/acatton/serde-yaml-neo/ci.yml?branch=master&style=for-the-badge" height="20">](https://github.com/acatton/serde-yaml-neo/actions?query=branch%3Amaster)
+[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-serde__yaml__neo-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/serde_yaml_neo)
+[<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/firstdorsal/serde-yaml-neo/ci.yml?branch=main&style=for-the-badge" height="20">](https://github.com/firstdorsal/serde-yaml-neo/actions?query=branch%3Amain)
 
 Rust library for using the [Serde] serialization framework with data in [YAML]
 file format. This library only follows the [YAML specification 1.1.](https://yaml.org/spec/1.1/).
-
-This library is a fork from the latest commit of [serde-yaml](https://github.com/dtolnay/serde-yaml),
-which was `200950`.
-<sup>\[[original](https://github.com/dtolnay/serde-yaml/commit/2009506d33767dfc88e979d6bc0d53d09f941c94)\]</sup>
-<sup>\[[this project](https://github.com/acatton/serde-yaml-neo/commit/2009506d33767dfc88e979d6bc0d53d09f941c94)\]</sup>
-My goal is to be compatible as much as possible with [David Tolnay](https://github.com/dtolnay)'s original library.
 
 [Serde]: https://github.com/serde-rs/serde
 [YAML]: https://yaml.org/
@@ -27,7 +21,7 @@ serde_yaml_neo = "0.10"
 
 Release notes are available under [GitHub releases].
 
-[GitHub releases]: https://github.com/acatton/serde-yaml-neo/releases
+[GitHub releases]: https://github.com/firstdorsal/serde-yaml-neo/releases
 
 ## Using Serde YAML
 
@@ -139,10 +133,27 @@ fn main() -> Result<(), serde_yaml_neo::Error> {
 }
 ```
 
+## Configurable Indentation
+
+You can customize the indentation level (2-9 spaces) when serializing:
+
+```rust
+use std::collections::BTreeMap;
+
+fn main() -> Result<(), serde_yaml_neo::Error> {
+    let mut data = BTreeMap::new();
+    data.insert("outer", BTreeMap::from([("inner", 1)]));
+
+    // Default 2-space indent
+    let yaml = serde_yaml_neo::to_string(&data)?;
+
+    // Custom 4-space indent
+    let yaml = serde_yaml_neo::to_string_with_indent(&data, 4)?;
+
+    Ok(())
+}
+```
+
 ## License
 
 Licensed <a href="LICENSE-MIT">MIT license</a>.
-
-Any contribution must be accompanied with a signature of the
-[Developer Certificate of Origin](https://developercertificate.org/),
-by using the `--signoff` flag on `git commit`.
