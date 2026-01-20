@@ -1,6 +1,6 @@
 [package]
 name = "serde_yaml_neo"
-version = "0.10.0"
+version = "0.11.0"
 authors = ["Paul Colin Hennig <8d_fvfmaa-o2wf_79aqig6g2ki6-09ffkeqmyo3d@vindelicum.eu>"]
 categories = ["encoding", "parser-implementations"]
 description = "YAML data format for Serde"

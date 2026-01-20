@@ -117,7 +117,7 @@
 //! }
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/serde_yaml_neo/0.10.0")]
+#![doc(html_root_url = "https://docs.rs/serde_yaml_neo/0.11.0")]
 #![deny(missing_docs, unsafe_op_in_unsafe_fn)]
 // Suppressed clippy_pedantic lints
 #![allow(
@@ -164,6 +164,7 @@
 
 pub use crate::de::{from_reader, from_slice, from_str, Deserializer};
 pub use crate::error::{Error, Location, Result};
+pub use crate::indent::{detect_indentation, detect_indentation_slice, Indentation};
 pub use crate::ser::{to_string, to_string_with_indent, to_writer, to_writer_with_indent, Serializer};
 #[doc(inline)]
 pub use crate::value::{from_value, to_value, Index, Number, Sequence, Value};
@@ -173,6 +174,7 @@ pub use crate::mapping::Mapping;
 
 mod de;
 mod error;
+mod indent;
 mod libyaml;
 mod loader;
 pub mod mapping;
