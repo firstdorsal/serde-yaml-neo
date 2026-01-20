@@ -1,5 +1,4 @@
-Serde YAML
-==========
+# Serde YAML
 
 [<img alt="github" src="https://img.shields.io/badge/github-acatton/serde--yaml--ng-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/acatton/serde-yaml-neo)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/serde_yaml_neo.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/serde_yaml_neo)
@@ -139,29 +138,6 @@ fn main() -> Result<(), serde_yaml_neo::Error> {
     Ok(())
 }
 ```
-
-## Why?
-
-I haven't found any good fork as of the start of this project. The best candidate was
-[serde\_yml](https://github.com/sebastienrousseau/serde_yml) which is based on
-[a giant "Initial commit" from the main maintainer](https://github.com/sebastienrousseau/serde_yml/commit/4312d4a56225b223410b5133af571fd13e62f18a).
-This is the type of practices which leads to [security disasters](https://en.wikipedia.org/wiki/XZ_Utils_backdoor).
-
-I don't want to fight with people about their practices, that's why I'm
-maintaining this library for myself, and for the rust ecosystem as a whole.
-As we say in French: "*You are never better served than by yourself*". 😉
-
-Use it, don't use it, I don't care. I'll try to fix as many bugs as I can.
-I'll accept pull requests if they're reasonable or easy to work with.
-
-## Financial Support
-
-I'm a guy working out of his garage at night with a well-paid job during the day. I
-do not need your money. **Please! Instead, give money to
-[David Tolnay](https://github.com/dtolnay).** This guy
-[carries half of the Rust ecosystem on his shoulders](https://crates.io/users/dtolnay),
-and wrote most of the code for this project before I forked it. I'm just a
-loser who jumped on the train, don't give me any money.
 
 ## License
 

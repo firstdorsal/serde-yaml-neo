@@ -62,10 +62,6 @@ pub(crate) struct Mapping {
 }
 
 impl<'a> Emitter<'a> {
-    pub fn new(write: Box<dyn io::Write + 'a>) -> Emitter<'a> {
-        Self::new_with_indent(write, 2)
-    }
-
     pub fn new_with_indent(write: Box<dyn io::Write + 'a>, indent: usize) -> Emitter<'a> {
         let owned = Owned::<EmitterPinned>::new_uninit();
         let pin = unsafe {
